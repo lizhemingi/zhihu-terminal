@@ -55,6 +55,10 @@ class Question:
         self.check()
         detail = self.soup.find("div", id="zh-question-detail")
         from Answer import print_content
+        if detail.find("div", class_="zm-editable-content"):
+            detail = detail.find("div", class_="zm-editable-content")
+        elif detail.find("div", class_="zh-summary summary clearfix"):
+            detail = detail.find("div", class_="zh-summary summary clearfix")
         print_content(detail.contents)
         #content = detail.text.strip()
         #content = self.soup.find("div", class_="zm-editable-content").text.strip()

@@ -69,7 +69,7 @@ class Answer:
         item = self.get_item()
         answer = item.find("div", class_="zm-editable-content clearfix")
         contents = answer.contents
-        print "\n ",
+        print "\n",
         print_content(contents)
         print "\n",
         '''

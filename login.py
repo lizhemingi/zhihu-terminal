@@ -8,7 +8,7 @@
 @site: lizheming.top
 @file: login.py
 
-登录文件,参考
+登录文件,参考https://github.com/egrcc/zhihu-python的实现
 """
 
 import requests

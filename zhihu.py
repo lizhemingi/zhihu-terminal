@@ -20,6 +20,7 @@ import json
 import termcolor
 import threading
 import time
+import random
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -182,7 +183,6 @@ def worker():
 
 
 def welcome():
-    #print termcolor.colored("\tWelcome to my life\n\tEnjoy yourself", "green")
     clear()
     print termcolor.colored(logo, "cyan")
     print termcolor.colored("Hello {}, 欢迎使用终端版知乎".format(username), "yellow")
@@ -216,19 +216,20 @@ def pwd():
         offset += 1
 
 
-def bye(**kwargs):
+def bye():
     global flag
     global op_stop
     flag = False
     op_stop = True
     print termcolor.colored("Bye", "cyan")
+    print termcolor.colored("有任何建议欢迎与我联系: nkdudu@126.com", "cyan")
 
 
-def clear(**kwargs):
+def clear():
     i = os.system("clear")
 
 
-def help(**kwargs):
+def help():
     info = "\n" \
            "**********************************************************\n" \
            "**\n" \
@@ -244,11 +245,11 @@ def help(**kwargs):
     print termcolor.colored(info, "green")
 
 
-def error(**kwargs):
+def error():
     print termcolor.colored("输入错误, 可通过", "red") + termcolor.colored("help", "cyan") + termcolor.colored("查看", "red")
 
 
-def exit(**kwargs):
+def exit():
     global flag
     global op_stop
     flag = False
@@ -274,15 +275,11 @@ def main():
     global temp
     global op_stop
     global thread
-    #global session
-
 
     ithread = threading.Thread(target=index)
     ithread.start()
     welcome()
     ithread.join()
-
-    #index()
 
     thread = threading.Thread(target=worker)
     thread.start()

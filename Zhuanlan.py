@@ -28,7 +28,7 @@ class Zhuanlan:
     def __init__(self, url):
         #https://zhuanlan.zhihu.com/p/20825292
         self.originalurl = url
-        number = re.findall(r"(\d+)",url)[0]
+        number = re.findall(r"(\d+)", url)[0]
         self.url = "http://zhuanlan.zhihu.com/api/posts/" + str(number)
 
         self.headers = headers.copy()

@@ -74,7 +74,7 @@ class TLItem:
         source = self.get_source()
         titles = self.get_titles()
         vote_number = self.get_vote_number()
-        links = source.select("a[class=zg-link]")
+        links = source.find_all("a", class_="zg-link author-link")
         member = links[0].text + ''.join(("、" + a.text) for a in links[1:])
         create_time = self.get_create_time()
         source_type = titles[-3] + vote_number if vote_number else titles[-3]

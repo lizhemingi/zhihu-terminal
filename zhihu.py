@@ -301,7 +301,7 @@ def main():
         op_stop = False
         while not op_stop:
             op = raw_input("Time Line$ ")
-            if not re.match(mode, op):
+            if not re.match(mode, op.strip()):
                 main_ops.get(op, error)()
             else:
                 opn = int(op)

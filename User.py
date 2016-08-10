@@ -44,14 +44,22 @@ class User:
     def open_in_browser(self):
         webbrowser.open_new(self.url)
 
-    def get_title(self):
+    def get_title_tag(self):
         self.check()
-        title = self.soup.find("div", class_="title-section ellipsis")
-        return title.text.strip()
+        title = self.soup.find("div", class_="title-section")
+        return title
+
+    def get_title(self):
+        title = self.get_title_tag()
+        name = title.span.text.strip()
+        des = title.find("div")
+        if des:
+            return "{0} [{1}]".format(name, str(des.get("title")))
+        return name
 
     def get_name(self):
-        title = self.get_title()
-        return title.split("，")[0].strip()
+        title = self.get_title_tag()
+        return title.span.text.strip()
 
     def get_weibo(self):
         self.check()
@@ -212,7 +220,7 @@ class User:
                             clear()
                             i = 0
                             break
-                    elif re.match(mode, op):
+                    elif re.match(mode, op.strip()):
                         opn = int(op)
                         if opn < len(answerlist):
                             if answerlist[opn].operate():

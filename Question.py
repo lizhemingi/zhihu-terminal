@@ -212,7 +212,7 @@ class Question:
                             i = 0
                             clear()
                             break
-                    elif re.match(mode, op):
+                    elif re.match(mode, op.strip()):
                         opn = int(op)
                         if opn < len(answerlist):
                             if answerlist[opn].operate():

@@ -194,7 +194,7 @@ class Question:
         i = 0
         count = 0
         answerlist = []
-        mode = re.compile(r"\d+")
+        mode = re.compile(r"^\d+$")
         for answer in answers:
             if i < limit and count < answer_num:
                 print count

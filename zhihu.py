@@ -283,7 +283,7 @@ def main():
 
     thread = threading.Thread(target=worker)
     thread.start()
-    mode = re.compile(r"\d+")
+    mode = re.compile(r"^\d+$")
     while flag:
         temp = offset
         x = 0

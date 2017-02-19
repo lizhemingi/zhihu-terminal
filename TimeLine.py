@@ -197,7 +197,7 @@ class TLItem:
                 if d[2][2]:
                     #print d[2][2]
                     from User import User
-                    user = User(d[2][2])
+                    user = User(d[2][2], self._xsrf)
                     if user.operate():
                         flag = False
                         return True

@@ -21,9 +21,10 @@ class User:
     url = None
     soup = None
 
-    def __init__(self, url):
+    def __init__(self, url, _xsrf=None):
         self.url = url
         self.headers = headers.copy()
+        self._xsrf = _xsrf
         #self.headers["Referer"] = self.url
 
     def parse(self):
@@ -34,7 +35,7 @@ class User:
             return False
         self.soup = BeautifulSoup(res.content, "html.parser")
         self.profile_header = self.soup.find("div", class_="zm-profile-header ProfileCard")
-        self._xsrf = re.findall(r'name="_xsrf" value="(\S+)"', res.content)[0]
+        # self._xsrf = re.findall(r'name="_xsrf" value="(\S+)"', res.content)[0]
         return True
 
     def check(self):
@@ -46,20 +47,18 @@ class User:
 
     def get_title_tag(self):
         self.check()
-        title = self.soup.find("div", class_="title-section")
+        title = self.soup.find("h1", class_="ProfileHeader-title")
         return title
-
-    def get_title(self):
-        title = self.get_title_tag()
-        name = title.span.text.strip()
-        des = title.find("div")
-        if des:
-            return "{0} [{1}]".format(name, str(des.get("title")))
-        return name
 
     def get_name(self):
         title = self.get_title_tag()
-        return title.span.text.strip()
+        return title.find("span", class_="ProfileHeader-name").text.strip()
+
+    def get_title(self):
+        title = self.get_title_tag()
+        name = self.get_name()
+        des = title.find("span", class_="RichText ProfileHeader-headline").text.strip()
+        return name + des
 
     def get_weibo(self):
         self.check()
@@ -88,12 +87,12 @@ class User:
 
     def get_agrees(self):
         self.check()
-        agrees = self.profile_header.find("span", class_="zm-profile-header-user-agree").strong.text
+        agrees = re.findall(r"(\d+)", self.soup.find("div", class_="IconGraf").text)[0]
         return agrees
 
     def get_thanks(self):
         self.check()
-        thanks = self.profile_header.find("span", class_="zm-profile-header-user-thanks").strong.text
+        thanks = re.findall(r"(\d+)", self.soup.find("div", class_="Profile-sideColumnItemValue").text)[0]
         return thanks
 
     def get_behavior_numbers(self):
@@ -103,32 +102,31 @@ class User:
 
     def get_following_numbers(self):
         self.check()
-        side_following = self.soup.find("div", class_="zm-profile-side-following zg-clear")
-        follow_numbers = side_following.find_all("a", class_="item")
-        return [int(number.strong.text) for number in follow_numbers]
+        follow_numbers = self.soup.find_all("div", class_="NumberBoard-value")
+        return [int(number.text) for number in follow_numbers]
 
     def show_base_info(self):
         infos = list()
         title = self.get_title()
         infos.append(termcolor.colored(title, "magenta"))
-        education = self.get_education()
-        infos.append(termcolor.colored("教育经历:" + education, "magenta") if education else education)
-        employment = self.get_employment()
-        infos.append(termcolor.colored("工作经历:" + employment, "magenta") if employment else employment)
-        thanks = self.get_thanks()
-        agrees = self.get_agrees()
-        infos.append(termcolor.colored("获得{0}赞同  {1}感谢".format(agrees, thanks), "magenta"))
+        # education = self.get_education()
+        # infos.append(termcolor.colored("教育经历:" + education, "magenta") if education else education)
+        # employment = self.get_employment()
+        # infos.append(termcolor.colored("工作经历:" + employment, "magenta") if employment else employment)
+        # thanks = self.get_thanks()
+        # agrees = self.get_agrees()
+        # infos.append(termcolor.colored("获得{0}赞同  {1}感谢".format(agrees, thanks), "magenta"))
         following_numbers = self.get_following_numbers()
         infos.append(termcolor.colored("关注了{0}  关注者{1}".format(*following_numbers), "magenta"))
-        numbers = self.get_behavior_numbers()
-        infos.append(termcolor.colored("提问{0}  回答{1}  文章{2}  收藏{3}  公共编辑{4}".format(*numbers), "magenta"))
+        # numbers = self.get_behavior_numbers()
+        # infos.append(termcolor.colored("提问{0}  回答{1}  文章{2}  收藏{3}  公共编辑{4}".format(*numbers), "magenta"))
         info = "\n".join(x for x in infos if x)
         print info
 
     def get_answers(self):
         self.check()
-        ans_num = self.get_behavior_numbers()[1]
-        for page in range(ans_num / 20 + 1):
+        answer_num = int(self.soup.find("span", class_="Tabs-meta").text)
+        for page in range(answer_num / 20 + 1):
             url = self.url + "/answers"
             params = {
                 "order_by": "vote_num",
@@ -147,8 +145,8 @@ class User:
         self.parse()
         username = self.get_name()
         #follow_button = self.soup.find("button", class_="zg-btn zg-btn-follow zm-rich-follow-btn with-icon")
-        follow_button = self.soup.find("button", class_="zg-btn zg-btn-follow zm-rich-follow-btn")
-        unfollow_button = self.soup.find("button", class_="zg-btn zg-btn-unfollow zm-rich-follow-btn")
+        follow_button = self.soup.find("button", class_="Button FollowButton Button--primary Button--blue")
+        unfollow_button = self.soup.find("button", class_="Button FollowButton Button--primary Button--grey")
         if not follow_button and unfollow_button:
             print termcolor.colored("您已经关注了用户{}".format(username), "red")
             return
@@ -173,8 +171,8 @@ class User:
         self.parse()
         username = self.get_title().split("，")[0].strip() #中文的逗号
         #unfollow_button = self.soup.find("button", class_="zg-btn zg-btn-unfollow zm-rich-follow-btn with-icon")
-        follow_button = self.soup.find("button", class_="zg-btn zg-btn-follow zm-rich-follow-btn")
-        unfollow_button = self.soup.find("button", class_="zg-btn zg-btn-unfollow zm-rich-follow-btn")
+        follow_button = self.soup.find("button", class_="Button FollowButton Button--primary Button--blue")
+        unfollow_button = self.soup.find("button", class_="Button FollowButton Button--primary Button--grey")
         if not unfollow_button and follow_button:
             print termcolor.colored("您还没有关注用户{0}".format(username), "red")
             return
@@ -198,7 +196,7 @@ class User:
     def answer_operate(self):
         print "\n",
         answers = self.get_answers()
-        answer_num = self.get_behavior_numbers()[1]
+        answer_num = int(self.soup.find("span", class_="Tabs-meta").text)
         i = 0
         count = 0
         answerlist = []
@@ -263,8 +261,6 @@ class User:
                 self.show_base_info()
             elif op == "browser":
                 self.open_in_browser()
-            elif op == "weibo":
-                self.open_weibo()
             elif op == "break":
                 break
             elif op == "help":
@@ -285,7 +281,6 @@ class User:
            "**  answers:    查看用户的回答\n" \
            "**  pwd:        查看用户\n" \
            "**  browser:    在默认浏览器中查看用户\n" \
-           "**  weibo:      在默认浏览器中查看用户微博\n" \
            "**  break:      返回上级操作目录\n" \
            "**  clear:      清屏\n" \
            "**  quit:       退出系统\n" \

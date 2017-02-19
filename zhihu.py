@@ -62,7 +62,7 @@ tid = None
 _xsrf = None
 
 headers = {
-    'User-Agent': "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:34.0) Gecko/20100101 Firefox/34.0",
+    'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36",
     'Host': "www.zhihu.com",
     #"Referer": "www.zhihu.com"
 }
@@ -127,6 +127,8 @@ def index():
     #print res.content
     _xsrf = re.findall(r'name="_xsrf" value="(\S+)"', res.content)[0]
 
+    print res.content
+
     soup = BeautifulSoup(res.content, "html.parser")
     items = soup.select(".feed-item.folding.feed-item-hook")
     for item in items:
@@ -156,7 +158,7 @@ def worker():
     }
     while flag:
         if len(datas) - offset > 10 * limit:
-            time.sleep(1)
+            time.sleep(6)
             continue
         try:
             res = session.post(url, data, headers=headers)
@@ -166,8 +168,8 @@ def worker():
         try:
             msgs = res.json()["msg"]
         except:
-            #print res.content
-            #print "link error 1326"
+            # print res.content
+            # print "link error 1326"
             continue
         for msg in msgs:
             soup = BeautifulSoup(msg, "html.parser")
@@ -180,6 +182,7 @@ def worker():
         params["start"] = tid
         params["offset"] += 21
         data["params"] = json.dumps(params)
+        time.sleep(6)
 
 
 def welcome():

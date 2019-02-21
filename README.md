@@ -1,13 +1,13 @@
 zhihu-terminal：终端版知乎
 ===============================
 
-##Author:
+## Author:
 
 * [lizheming](http://lizheming.top)
 
 * <nkdudu@126.com>
 
-##介绍
+## 介绍
 
 zhihu-terminal 采用 python2.7编写，通过在命令行中执行python程序运行知乎客户端，就可以用类似bash命令的方式来刷TL、来关注问题和给别人点赞啦。
 
@@ -38,8 +38,8 @@ zhihu-terminal 采用 python2.7编写，通过在命令行中执行python程序�
 本项目依赖于:
 
 * [Beautiful Soup 4](http://www.crummy.com/software/BeautifulSoup/)
-* [requests](https://github.com/kennethreitz/requests)
-* [termcolor](https://pypi.python.org/pypi/termcolor)
+* [Requests](https://github.com/kennethreitz/requests)
+* [Termcolor](https://pypi.python.org/pypi/termcolor)
 
 准备好虚拟环境并激活，执行以下命令可直接安装依赖：
 
@@ -113,6 +113,11 @@ login.py的代码实现参考的就是[zhihu-python](https://github.com/egrcc/zh
 联系我
 ----------
 
-- email: nkdudu@126.com
-- github: https://github.com/duduainankai
-- zhihu: https://www.zhihu.com/people/du-du-76-75
+- Email: nkdudu@126.com
+- GitHub: https://github.com/duduainankai
+- Zhihu: https://www.zhihu.com/people/du-du-76-75
+
+# LICENSE
+
+This program is supported by the [MIT](https://github.com/duduainankai/zhihu-terminal/blob/master/LICENSE) license
+------
